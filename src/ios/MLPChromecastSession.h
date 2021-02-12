@@ -28,6 +28,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)setReceiverMutedWithCommand:(CDVInvokedUrlCommand*)command muted:(BOOL)muted;
 - (void)loadMediaWithCommand:(CDVInvokedUrlCommand*)command mediaInfo:(GCKMediaInformation*)mediaInfo autoPlay:(BOOL)autoPlay currentTime : (double)currentTime;
 - (void)createMessageChannelWithCommand:(CDVInvokedUrlCommand*)command namespace:(NSString*)namespace;
+- (GCKGenericChannel*)getMessageChannel:namespace:(NSString*)namespace;
 - (void)sendMessageWithCommand:(CDVInvokedUrlCommand*)command namespace:(NSString*)namespace message:(NSString*)message;
 - (void)mediaSeekWithCommand:(CDVInvokedUrlCommand*)command position:(NSTimeInterval)position resumeState:(GCKMediaResumeState)resumeState;
 - (void)mediaPlayWithCommand:(CDVInvokedUrlCommand*)command;

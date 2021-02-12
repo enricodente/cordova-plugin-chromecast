@@ -206,32 +206,38 @@ NSMutableArray<MLPCastRequestDelegate*>* requestDelegates;
 }
 
 - (void)createMessageChannelWithCommand:(CDVInvokedUrlCommand*)command namespace:(NSString*)namespace{
-    GCKGenericChannel* newChannel = [[GCKGenericChannel alloc] initWithNamespace:namespace];
-    newChannel.delegate = self;
-    self.genericChannels[namespace] = newChannel;
-    [currentSession addChannel:newChannel];
+    GCKGenericChannel* newChannel = [self getMessageChannel:namespace];
     CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
-- (void)sendMessageWithCommand:(CDVInvokedUrlCommand*)command namespace:(NSString*)namespace message:(NSString*)message{
-
+- (GCKGenericChannel*)getMessageChannel:namespace:(NSString*)namespace{
+    GCKGenericChannel* channel = self.genericChannels[namespace];
+    if (channel != nil) {
+        return channel;
+    }
     GCKGenericChannel* newChannel = [[GCKGenericChannel alloc] initWithNamespace:namespace];
     newChannel.delegate = self;
     self.genericChannels[namespace] = newChannel;
     [currentSession addChannel:newChannel];
+    return newChannel;
+}
 
-    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:[NSString stringWithFormat:@"Namespace %@ not found",namespace]];
+- (void)sendMessageWithCommand:(CDVInvokedUrlCommand*)command namespace:(NSString*)namespace message:(NSString*)message {
+    GCKGenericChannel* channel = [self getMessageChannel:namespace];
+    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:[NSString stringWithFormat:@"Namespace %@ not founded",namespace]];
     
-    if(newChannel != nil) {
+    if (channel != nil) {
         GCKError* error = nil;
-        [newChannel sendTextMessage:message error:&error];
+        [channel sendTextMessage:message error:&error];
         if (error != nil) {
             pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:error.description];
         } else {
             pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
         }
     }
+    
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
 - (void)mediaSeekWithCommand:(CDVInvokedUrlCommand*)command position:(NSTimeInterval)position resumeState:(GCKMediaResumeState)resumeState {
