@@ -4,7 +4,7 @@
 # Installation
 
 ```
-cordova plugin add https://github.com/jellyfin/cordova-plugin-chromecast.git
+cordova plugin add cordova-plugin-chromecast-sendmessage
 ```
 
 If you have trouble installing the plugin or running the project for iOS, from `/platforms/ios/` try running:  
