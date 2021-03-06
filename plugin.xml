@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <plugin xmlns="http://phonegap.com/ns/plugins/1.0"
         xmlns:android="http://schemas.android.com/apk/res/android"
-        id="cordova-plugin-chromecast"
-        version="2.0.3">
+        id="cordova-plugin-chromecast-sendmessage"
+        version="2.2.2">
   <engines>
     <engine name="cordova" version=">=3.4.0" />
   </engines>
@@ -56,7 +56,7 @@
         <source url="https://cdn.cocoapods.org/"/>
       </config>
       <pods use-frameworks="true">
-        <pod name="google-cast-sdk" spec="~> 4.5.3" />
+        <pod name="google-cast-sdk" spec="~> 4.4.6" />
       </pods>
     </podspec>
 
