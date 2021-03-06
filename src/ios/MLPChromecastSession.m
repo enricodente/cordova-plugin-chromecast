@@ -211,25 +211,16 @@ NSMutableArray<MLPCastRequestDelegate*>* requestDelegates;
 }
 
 - (void)createMessageChannelWithCommand:(CDVInvokedUrlCommand*)command namespace:(NSString*)namespace{
-    GCKGenericChannel* newChannel = [self getMessageChannel:namespace];
-    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-}
-
-- (GCKGenericChannel*)getMessageChannel:namespace:(NSString*)namespace{
-    GCKGenericChannel* channel = self.genericChannels[namespace];
-    if (channel != nil) {
-        return channel;
-    }
     GCKGenericChannel* newChannel = [[GCKGenericChannel alloc] initWithNamespace:namespace];
     newChannel.delegate = self;
     self.genericChannels[namespace] = newChannel;
     [currentSession addChannel:newChannel];
-    return newChannel;
+    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
 - (void)sendMessageWithCommand:(CDVInvokedUrlCommand*)command namespace:(NSString*)namespace message:(NSString*)message {
-    GCKGenericChannel* channel = [self getMessageChannel:namespace];
+    GCKGenericChannel* channel = self.genericChannels[namespace];
     CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:[NSString stringWithFormat:@"Namespace %@ not founded",namespace]];
     
     if (channel != nil) {
