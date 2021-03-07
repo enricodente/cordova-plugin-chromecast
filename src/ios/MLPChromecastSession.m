@@ -29,12 +29,12 @@ NSMutableArray<MLPCastRequestDelegate*>* requestDelegates;
     // Ensure we are only listening once after init
     [self.sessionManager removeListener:self];
     [self.sessionManager addListener:self];
-
+    
     // Ensure initializaition of genericChannels
     if (self.genericChannels == nil) {
         self.genericChannels = [[NSMutableDictionary alloc] init];
     }
-    
+
     return self;
 }
 
@@ -224,8 +224,24 @@ NSMutableArray<MLPCastRequestDelegate*>* requestDelegates;
     CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:[NSString stringWithFormat:@"Namespace %@ not founded",namespace]];
     
     if (channel != nil) {
+
+        [currentSession addChannel:channel];
+
         GCKError* error = nil;
         [channel sendTextMessage:message error:&error];
+        if (error != nil) {
+            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:error.description];
+        } else {
+            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+        }
+    } else {
+        GCKGenericChannel* newChannel = [[GCKGenericChannel alloc] initWithNamespace:namespace];
+        newChannel.delegate = self;
+        self.genericChannels[namespace] = newChannel;
+        [currentSession addChannel:newChannel];
+
+        GCKError* error = nil;
+        [newChannel sendTextMessage:message error:&error];
         if (error != nil) {
             pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:error.description];
         } else {
